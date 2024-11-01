@@ -70,6 +70,7 @@ unsigned int fixedSeed = 1;   // default seed
 bool useTreeList = true;
 char treeType = 'm';        // the default tree is a mutation tree; other option is 't' for (transposed case), where we have a binary leaf-labeled tree
 int maxTreeListSize = -1;  // defines the maximum size of the list of optimal trees, default -1 means no restriction
+string newickFileName;              // file where the newick trees are outputted
 
 int main(int argc, char* argv[])
 {
@@ -97,7 +98,7 @@ int main(int argc, char* argv[])
 	if(trueTreeComp==true){ trueParentVec = getParentVectorFromGVfile(trueTreeFileName, n); }
 
 	/**  Find best scoring trees by MCMC  **/
-	sampleOutput = runMCMCbeta(optimalTrees, errorRates, rep, loops, gamma, moveProbs, n, m, dataMatrix, scoreType, trueParentVec, sampleStep, sample, chi, priorSd, useTreeList, treeType);
+	sampleOutput = runMCMCbeta(optimalTrees, errorRates, rep, loops, gamma, moveProbs, n, m, dataMatrix, scoreType, trueParentVec, sampleStep, sample, chi, priorSd, useTreeList, treeType, newickFileName);
 
 
 	/***  output results  ***/
@@ -314,6 +315,8 @@ int readParameters(int argc, char* argv[]){
 			scoreType = 's';
 		} else if (strcmp(argv[i],"-transpose")==0) {
 					treeType = 't';
+		} else if (strcmp(argv[i],"-newicks")==0) {
+			if (i + 1 < argc) { newickFileName = argv[++i];}
 		} else {
 			std::cerr << "unknown parameter " << argv[i] << std::endl;
 			return 1;

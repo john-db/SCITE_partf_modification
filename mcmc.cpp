@@ -41,7 +41,7 @@ double burnInPhase = 0.25;    // first quarter of steps are burn in phase
 
 
 /* This runs the MCMC for learning the tree and beta, or only the tree with a fixed beta, it samples from the posterior and/or records the optimal trees/beta */
-std::string runMCMCbeta(vector<struct treeBeta>& bestTrees, double* errorRates, int noOfReps, int noOfLoops, double gamma, vector<double> moveProbs, int n, int m, int** dataMatrix, char scoreType, int* trueParentVec, int step, bool sample, double chi, double priorSd, bool useTreeList, char treeType){
+std::string runMCMCbeta(vector<struct treeBeta>& bestTrees, double* errorRates, int noOfReps, int noOfLoops, double gamma, vector<double> moveProbs, int n, int m, int** dataMatrix, char scoreType, int* trueParentVec, int step, bool sample, double chi, double priorSd, bool useTreeList, char treeType, string newickFileName){
 
 
 	unsigned int optStatesAfterBurnIn = 0;
@@ -87,6 +87,9 @@ std::string runMCMCbeta(vector<struct treeBeta>& bestTrees, double* errorRates, 
         	bool moveAccepted = false;                                           // Is the MCMC move accepted?
         	bool moveChangesBeta = changeBeta(moveProbs[0]);                     // true if this move changes beta, not the tree
 
+			stringstream newick;
+
+
         	if(moveChangesBeta){                                                                // new beta is proposed, log scores change tree is copy of current tree
         		double propBeta = proposeNewBeta(currBeta, jumpSd);
         		double** propLogScores = deepCopy_doubleMatrix(currLogScores, 4, 2);
@@ -115,12 +118,18 @@ std::string runMCMCbeta(vector<struct treeBeta>& bestTrees, double* errorRates, 
         		int* propTreeParVec;
         		double propTreeLogScore;
         		if(treeType=='m'){ propTreeParVec = proposeNewTree(moveProbs, n, currTreeAncMatrix, currTreeParentVec, nbhcorrection);              // propose new tree and
-        		                   propTreeLogScore = scoreTree( n, m, currLogScores, dataMatrix, scoreType, propTreeParVec, bestTreeLogScore);}    //  get the new tree score
+        		                   propTreeLogScore = scoreTree( n, m, currLogScores, dataMatrix, scoreType, propTreeParVec, bestTreeLogScore);
+								   }    //  get the new tree score
         		else{              propTreeParVec = proposeNextBinTree(moveProbs, m, currTreeParentVec, currTreeAncMatrix);
-        		                   propTreeLogScore = getBinTreeScore(dataMatrix, n, m, currLogScores, propTreeParVec);}
+        		                   propTreeLogScore = getBinTreeScore(dataMatrix, n, m, currLogScores, propTreeParVec);
+								   }
+				vector<vector<int> > childLists = getChildListFromParentVector(propTreeParVec, parentVectorSize);
+				newick << getNewickCode(childLists, parentVectorSize) << "\n";
 
         		if (sample_0_1() < nbhcorrection*exp((propTreeLogScore-currTreeLogScore)*gamma)){                    // the proposed tree is accepted
         			moveAccepted = true;
+					
+
         			free_boolMatrix(currTreeAncMatrix);                                            // discard outdated tree
         			delete[] currTreeParentVec;
         			currTreeAncMatrix = parentVector2ancMatrix(propTreeParVec,parentVectorSize); // update matrix of current tree
@@ -160,6 +169,17 @@ std::string runMCMCbeta(vector<struct treeBeta>& bestTrees, double* errorRates, 
         	if(currScore == bestScore && it>=burnIn){
         		optStatesAfterBurnIn++;
         	}
+
+			if (moveAccepted) {
+				string file = newickFileName + "_accepted";
+				appToFile(newick.str(), file);
+			} else {
+				string file = newickFileName + "_rejected";
+				appToFile(newick.str(), file);
+			}
+			string file = newickFileName + "_all";
+			appToFile(newick.str(), file);
+
         }
         delete [] currTreeParentVec;
         free_doubleMatrix(currLogScores);

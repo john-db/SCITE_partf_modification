@@ -201,6 +201,13 @@ void writeToFile(string content, string fileName){
 	outfile.close();
 }
 
+void appToFile(string content, string fileName){
+	ofstream outfile;
+	outfile.open (fileName.c_str(), std::ios_base::app);
+	outfile << content;
+	outfile.close();
+}
+
 /* creates the content for the GraphViz file from a parent vector, using numbers as node labels (from 1 to n+1) */
 std::string getGraphVizFileContentNumbers(int* parents, int n){
 	std::stringstream content;

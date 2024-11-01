@@ -16,6 +16,7 @@ int getLcaWithLabel(int node, int* parent, std::vector<std::string> label, int n
 std::string getGraphVizBinTree(int* parents, int nodeCount, int m, std::vector<std::string> label);
 std::string getMutTreeGraphViz(std::vector<std::string> label, int nodeCount, int m, int* parent);
 void writeToFile(std::string content, std::string fileName);
+void appToFile(std::string content, std::string fileName);
 std::string getGraphVizFileContentNumbers(int* parents, int n);
 std::string getGraphVizFileContentNames(int* parents, int n, std::vector<std::string> geneNames, bool attachSamples, bool** ancMatrix, int m, double** logScores, int** dataMatrix);
 std::string getBestAttachmentString(bool ** ancMatrix, int n, int m, double** logScores, int** dataMatrix, std::vector<std::string> geneNames);
