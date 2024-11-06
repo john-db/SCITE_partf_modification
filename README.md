@@ -1,38 +1,12 @@
-# SCITE
+
+
+
+# SCITE (modified version, forked from https://github.com/cbg-ethz/SCITE)
 ========
 
-## Update
----------
-Please be aware that the software (https://github.com/cbg-ethz/infSCITE) accompanying our publication
+## Overview
 
-Kuipers J et al. Single-cell sequencing data reveals widespread recurrence and loss of mutational hits in the life histories of tumorus. Genome Research 2017; 27:1885-1894.
-
-is an extended version of SCITE that has a couple of new features:
-
-* Explicit modelling of doublets
-* Option to specify one recurrent mutation/one mutation loss.
-* Learning  of the false positive rate for panel sequencing data
-
-
-## Description
---------------
-
-
-**SCITE** is a software package to compute mutation histories of somatic cells.
-Given noisy mutation profiles of single cells, **SCITE** performs a stochastic
-search to find the Maximum Likelihood (ML) or Maximum aposterori (MAP) tree and/or to sample from the posterior
-probability distribution. Tree reconstruction can be combined with an estimation
-of the error rates in the mutation profiles.
-
-**SCITE** is particularly designed for reconstructing mutation histories of
-tumours based on mutation profiles obtained from single-cell exome sequencing experiments, but is in 
-principle applicable to any type of (noisy) mutation profiles for which the
-infinite sites assumption can be made.
-
-## Availability
----------------
-
-**SCITE** is freely available under a GPL3 license at https://gitlab.com/jahnka/SCITE
+Please note that this is modified version of SCITE forked from https://github.com/cbg-ethz/SCITE. This repository contains modified version of SCITE that enables the collection of all proposed cell lineage trees and printing them to output file. To achieve this, we made slight adjustments to the original code, and also enabled one additional parameter, namely `-newicks` which may be used to provide the base filename for three log files containing the collected trees (one for all proposed trees, one for only the accepted trees, and one for only the rejected trees). This modification only works when SCITE is run in transposed mode (to run SCITE in transposed mode, provide the `-transpose` flag). To use unmodified/original SCITE, please refer to https://github.com/cbg-ethz/SCITE.
 
 ##    How to run **SCITE**
 --------------------------
